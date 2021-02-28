@@ -1,6 +1,6 @@
 # Support Vector Machine
 
-This is an implementation of a Support Vector Machine. It was part of a school assignment in my machine learning course. The algorithm is built from scratch, using Python packages NumPy and SciPy, and following assignment instructions in “instruction.pdf”. 
+This is an implementation of a Support Vector Machine. It was part of a school assignment in my machine learning course. The algorithm is built from scratch, using Python packages NumPy and SciPy, and following assignment instructions in “instructions.pdf”. 
 
 It can be used to classify data points with linear and non-linear functions, as seen in Figure 1. 
 
