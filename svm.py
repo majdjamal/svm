@@ -4,7 +4,7 @@
 __author__ = "Majd Jamal"
 
 import numpy as np
-from scipy.optimize import minimize 
+from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
 class SVM:
@@ -29,7 +29,7 @@ class SVM:
 		self.kernelMTX = None
 
 	def linear(self, a, b):
-		""" Linear kernel function 
+		""" Linear kernel function
 		:param a: Vector A
 		:param b: Vector B
 		:return: Dot product between A and B
@@ -37,7 +37,7 @@ class SVM:
 		return np.dot(a, b)
 
 	def poly(self, a, b):
-		""" Polynomial kernel function 
+		""" Polynomial kernel function
 		:param a: Vector A
 		:param b: Vector B
 		:return: Function values
@@ -45,7 +45,7 @@ class SVM:
 		return (np.dot(a, b) + 1) ** self.degree
 
 	def rbf(self, p1, p2):
-		""" Radial Basis Function kernel  
+		""" Radial Basis Function kernel
 		:param p1: Vector A
 		:param p2: Vector B
 		:return: Function values
@@ -56,15 +56,15 @@ class SVM:
 		return np.exp(-(numerator/denomintaor))
 
 	def kernelMatrix(self, X, y):
-		""" Compute the kernel matrix 
+		""" Compute the kernel matrix
 		:param X: patterns
 		:param y: targets
 		:return: Kernel Matrix
 		"""
-		matrix = np.zeros((Npts,Npts))
+		matrix = np.zeros((self.Npts,self.Npts))
 
-		for i in range(Npts):
-			for j in range(Npts):
+		for i in range(self.Npts):
+			for j in range(self.Npts):
 
 				if self.kernel == 'linear':
 					func = self.linear(X[i], X[j])
@@ -90,8 +90,8 @@ class SVM:
 		return summation[0] - np.sum(alpha)
 
 	def zerofun(self, alpha):
-		""" Equality constraint. This function 
-			implements the equation 10 from 
+		""" Equality constraint. This function
+			implements the equation 10 from
 			the instruction file.
 		:param alpha: weights
 		:return: Function values
@@ -104,7 +104,7 @@ class SVM:
 				 alpha is non-zero.
 		"""
 		return np.where(self.alpha > 1e-5)[0]
-	
+
 
 	def calcB(self):
 		""" Computes B-values, using
@@ -123,9 +123,9 @@ class SVM:
 						func = self.poly(self.patterns[i], self.patterns[j])
 					elif self.kernel == 'rbf':
 						func = self.rbf(self.patterns[i], self.patterns[j])
-				
-					b += self.alpha[j]*self.targets[j]*func	
-				
+
+					b += self.alpha[j]*self.targets[j]*func
+
 				b -= self.targets[i]
 
 		self.b = b/self.nonZeros.shape[0]
@@ -133,17 +133,17 @@ class SVM:
 	def visualize(self):
 		""" Visualize the decision boundary.
 		"""
-		xgrid=np.linspace(-5, 5) 
+		xgrid=np.linspace(-5, 5)
 		ygrid=np.linspace(-4, 4)
 
-		grid=np.array([[self.indicator(x, y) 
-			for x in xgrid] 
+		grid=np.array([[self.indicator(x, y)
+			for x in xgrid]
 			for y in ygrid])
 
 		plt.style.use('seaborn')
-		plt.contour(xgrid, ygrid, grid, 
-			(-1.0, 0.0, 1.0), 
-			colors=('red', 'black', 'blue'), 
+		plt.contour(xgrid, ygrid, grid,
+			(-1.0, 0.0, 1.0),
+			colors=('red', 'black', 'blue'),
 			linewidths=(1, 3, 1))
 
 		plt.xlabel('x1')
@@ -154,10 +154,10 @@ class SVM:
 
 
 	def indicator(self, x, y):
-		""" Indicator. This function takes 
-			a data point and investigates at which 
-			side of the decision boundary it is located. 
-			It is an implementation of equation 6 
+		""" Indicator. This function takes
+			a data point and investigates at which
+			side of the decision boundary it is located.
+			It is an implementation of equation 6
 			from the instruction file.
 		:param x: The x-coordinate of a data point
 		:param y: The y-coordinate of a data point
@@ -172,17 +172,17 @@ class SVM:
 				func = self.poly((x, y), self.patterns[i])
 			elif self.kernel == 'rbf':
 				func = self.rbf((x, y), self.patterns[i])
-		
+
 			ind += self.alpha[i]*self.targets[i]*func
 
 		indication = ind - self.b
-		
+
 		return indication
 
 	def fit(self, X, y):
 		""" Train the Support Vector Machine.
-			This function uses SciPy optimze to 
-			find the optimal alpha values. 
+			This function uses SciPy optimze to
+			find the optimal alpha values.
 		:param X: Data Matrix. Shape is (Npts, Ndim = 2)
 		:param y: Labels
 		"""
@@ -192,25 +192,25 @@ class SVM:
 		self.kernelMTX = self.kernelMatrix(X, y)
 
 		self.C = 1
-		B = [(0, self.C) for b in range(Npts)]
+		B = [(0, self.C) for b in range(self.Npts)]
 		XC = {'type':'eq', 'fun':self.zerofun}
 
-		ret = minimize(self.dualProblem, np.random.normal(Npts), bounds=B, constraints=XC)
+		ret = minimize(self.dualProblem, np.random.normal(self.Npts), bounds=B, constraints=XC)
 		self.alpha = ret['x']
 		self.nonZeros = self.nonZero()
 		self.calcB()
 
 	def predict(self, X):
-		""" Classifies data point-s. 
+		""" Classifies data point-s.
 		:param X: Data Matrix
 		:return: label-s
 		"""
 		if X[0].size == 1:
-			
+
 			pred = self.indicator(X[0], X[1])
 			return np.where(pred > 0, 1, -1)
 
-		else: 
+		else:
 
 			Npts, _ = X.shape
 
@@ -221,4 +221,3 @@ class SVM:
 				predictions[i] = np.where(pred > 0, 1, -1)
 
 			return predictions
-
