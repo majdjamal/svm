@@ -33,7 +33,7 @@ plt.plot([p[0] for p in classB], [p[1] for p in classB], 'r.', label="class B")
 svm = SVM()
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# 2. Polynomail Kernel
+# 2. Polynomial Kernel
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 #svm = SVM('poly', C = 2, degree=2)
 
